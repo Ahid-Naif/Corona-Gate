@@ -4,6 +4,9 @@ from pyzbar import pyzbar
 import imutils
 import time
 import cv2
+import re
+
+checkForMask = False
 
 # initialize the video stream and allow the camera sensor to warm up
 print("[INFO] starting video stream...")
@@ -53,8 +56,12 @@ while True:
 		text = "{}".format(barcodeData)
 		cv2.putText(frame, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX,
 			0.5, (0, 0, 255), 2)
+
+		regex_result = re.search("[\w\d\.\*\\=*?*]", barcodeData)
+
 		# print the barcode type and data to the terminal
-		print("[INFO] Found {} barcode: {}".format(barcodeType, barcodeData))
+		# print("[INFO] Found {} barcode: {}".format(barcodeType, barcodeData))
+		# print("[INFO] Found regex: {} {} characters".format(barcodeData, len(barcodeData)))
 
 	cv2.imshow('QR Code Scanner', frame)
 	key = cv2.waitKey(1) & 0xFF
