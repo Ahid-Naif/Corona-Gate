@@ -5,16 +5,28 @@ import imutils
 import time
 import cv2
 import re
+from keras.models import load_model
+import numpy as np
+
+model=load_model("./model2-006.model")
+
+labels_dict={0:'without mask',1:'mask'}
+color_dict={0:(0,0,255),1:(0,255,0)}
+
+# We load the xml file
+classifier = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
 checkForMask = False
 timeIn = time.time()
 waitMaskDuration = 5
 
+# initialize the video stream and allow the camera sensor to warm up
+print("[INFO] starting video stream...")
+vs = VideoStream(src=0).start()
+time.sleep(2.0)
+
 def main():
-	# initialize the video stream and allow the camera sensor to warm up
-	print("[INFO] starting video stream...")
-	vs = VideoStream(src=0).start()
-	time.sleep(2.0)
+	global vs
 
 	# loop over the frames from the video stream
 	while True:
@@ -25,6 +37,8 @@ def main():
 		# have a maximum width of 400 pixels
 		frame = vs.read()
 		frame = imutils.resize(frame, width=600)
+
+		height, width,_ = frame.shape
 		
 		hsv = cv2.cvtColor(frame.copy(), cv2.COLOR_BGR2HSV)
 		(h, s, v) = cv2.split(hsv)
@@ -63,11 +77,7 @@ def main():
 			cv2.putText(frame, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX,
 				0.5, (0, 0, 255), 2)
 
-			regex_result = re.findall("[\w\d\.\*\\=*?*]", barcodeData)
-
-			# print the barcode type and data to the terminal
-			# print("[INFO] Found {} barcode: {}".format(barcodeType, barcodeData))
-			# print("[INFO] Found regex: {} {} characters".format(barcodeData, len(regex_result)))
+			regex_result = re.findall("[\w\d\.\*\\=*?*+*-*/*]", barcodeData)
 
 			if len(regex_result) == 44:
 				print("[INFO] Pass")
@@ -75,9 +85,14 @@ def main():
 		
 		if checkForMask:
 			checkForMask = False
+			cv2.destroyAllWindows()
 			timeIn = time.time()
 			maskCode()
 
+		cv2.putText(frame, "QR Scan", (10, height - 10), cv2.FONT_HERSHEY_SIMPLEX,
+			1, (0, 255, 255), 2)
+		cv2.putText(frame, "#1", (width - 60, height - 10), cv2.FONT_HERSHEY_SIMPLEX,
+			1, (0, 255, 255), 2)
 		cv2.imshow('QR Code Scanner', frame)
 		key = cv2.waitKey(1) & 0xFF
 
@@ -92,19 +107,61 @@ def main():
 def maskCode():
 	global timeIn
 	global waitMaskDuration
+	global vs
 
-	print("Start Mask Code!")
-	print(time.time())
+	size = 4
 	
 	while True:
-		print(time.time() - timeIn)
-		print(time.time() - timeIn > waitMaskDuration)
 		if time.time() - timeIn > waitMaskDuration:
+			cv2.destroyAllWindows()
 			break
 
-		print("Mask code!")
+		frame = vs.read()
+		frame = imutils.resize(frame, width=600)
+
+		height, width,_ = frame.shape
+
+		frame = cv2.flip(frame,1,1) #Flip to act as a mirror
+
+		# Resize the image to speed up detection
+		mini = cv2.resize(frame, (frame.shape[1] // size, frame.shape[0] // size))
+
+		# detect MultiScale / faces 
+		faces = classifier.detectMultiScale(mini)
+
+		# Draw rectangles around each face
+		for f in faces:
+			(x, y, w, h) = [v * size for v in f] #Scale the shapesize backup
+			#Save just the rectangle faces in SubRecFaces
+
+			face_img = frame[y:y+h, x:x+w]
+			resized = cv2.resize(face_img,(150,150))
+			normalized = resized / 255.0
+			reshaped = np.reshape(normalized,(1,150,150,3))
+			reshaped = np.vstack([reshaped])
+			result = model.predict(reshaped)
+			#print(result)
+			
+			label = np.argmax(result,axis=1)[0]
+		
+			cv2.rectangle(frame,(x,y),(x+w,y+h),color_dict[label],2)
+			cv2.rectangle(frame,(x,y-40),(x+w,y),color_dict[label],-1)
+			cv2.putText(frame, labels_dict[label], (x, y-10),cv2.FONT_HERSHEY_SIMPLEX,0.8,(255,255,255),2)
+		
+		# Show the image
+		cv2.putText(frame, "Mask Scan", (10, height - 10), cv2.FONT_HERSHEY_SIMPLEX,
+			1, (0, 255, 255), 2)
+		cv2.putText(frame, "#1", (width - 60, height - 10), cv2.FONT_HERSHEY_SIMPLEX,
+			1, (0, 255, 255), 2)
+		cv2.imshow('Mask Detection', frame)
+		key = cv2.waitKey(1) & 0xFF
+		# if the `q` key was pressed, break from the loop
+		if key == ord("q"):
+			print("[INFO] cleaning up...")
+			cv2.destroyAllWindows()
+			vs.stop()
+			break
 	
-	print("End of Mask code")
 
 if __name__ == "__main__":
 	main()
