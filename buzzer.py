@@ -4,7 +4,7 @@ import time
 GPIO.setwarnings(False) 
 GPIO.setmode(GPIO.BOARD)
 
-GPIO.setup(8, GPIO.OUT, initial=GPIO.LOW) 
+GPIO.setup(37, GPIO.OUT, initial=GPIO.LOW) 
 
 def main():
 
@@ -13,13 +13,13 @@ def main():
 		buzzerOff(2)
 
 def buzzerOff(waitTime):
-	GPIO.output(8, GPIO.LOW)
+	GPIO.output(37, GPIO.LOW)
 	#
 	time.sleep(waitTime)
 	#
 
 def buzzerOn(waitTime):
-	GPIO.output(8, GPIO.HIGH)
+	GPIO.output(37, GPIO.HIGH)
 	#
 	time.sleep(waitTime)
 	#
