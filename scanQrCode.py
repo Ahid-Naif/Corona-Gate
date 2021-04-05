@@ -19,6 +19,7 @@ classifier = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 checkForMask = False
 timeIn = time.time()
 waitMaskDuration = 5
+num_people = 0
 
 # initialize the video stream and allow the camera sensor to warm up
 print("[INFO] starting video stream...")
@@ -26,13 +27,13 @@ vs = VideoStream(src=0).start()
 time.sleep(2.0)
 
 def main():
+	global checkForMask
+	global timeIn
 	global vs
+	global num_people
 
 	# loop over the frames from the video stream
 	while True:
-		global checkForMask
-		global timeIn
-
 		# grab the frame from the threaded video stream and resize it to
 		# have a maximum width of 400 pixels
 		frame = vs.read()
@@ -91,7 +92,7 @@ def main():
 
 		cv2.putText(frame, "QR Scan", (10, height - 10), cv2.FONT_HERSHEY_SIMPLEX,
 			1, (0, 255, 255), 2)
-		cv2.putText(frame, "#1", (width - 60, height - 10), cv2.FONT_HERSHEY_SIMPLEX,
+		cv2.putText(frame, "#{}".format(num_people), (width - 60, height - 10), cv2.FONT_HERSHEY_SIMPLEX,
 			1, (0, 255, 255), 2)
 		cv2.imshow('QR Code Scanner', frame)
 		key = cv2.waitKey(1) & 0xFF
@@ -108,8 +109,12 @@ def maskCode():
 	global timeIn
 	global waitMaskDuration
 	global vs
+	global num_people
 
 	size = 4
+	masktime = 0
+	isMaskOn = False
+	isBreak = False
 	
 	while True:
 		if time.time() - timeIn > waitMaskDuration:
@@ -140,10 +145,27 @@ def maskCode():
 			reshaped = np.reshape(normalized,(1,150,150,3))
 			reshaped = np.vstack([reshaped])
 			result = model.predict(reshaped)
-			#print(result)
 			
 			label = np.argmax(result,axis=1)[0]
-		
+
+			print(labels_dict[label])
+			
+			if isMaskOn == False:
+				if(labels_dict[label] == 'mask'):
+					isMaskOn = True
+					maskTime = time.time()
+			else:
+				if time.time() - maskTime > 1:
+					if(labels_dict[label] == 'mask'):
+						isMaskOn = False
+						isBreak = True
+						num_people = num_people + 1
+						break
+					else:
+						isMaskOn = False
+					
+					
+
 			cv2.rectangle(frame,(x,y),(x+w,y+h),color_dict[label],2)
 			cv2.rectangle(frame,(x,y-40),(x+w,y),color_dict[label],-1)
 			cv2.putText(frame, labels_dict[label], (x, y-10),cv2.FONT_HERSHEY_SIMPLEX,0.8,(255,255,255),2)
@@ -151,7 +173,7 @@ def maskCode():
 		# Show the image
 		cv2.putText(frame, "Mask Scan", (10, height - 10), cv2.FONT_HERSHEY_SIMPLEX,
 			1, (0, 255, 255), 2)
-		cv2.putText(frame, "#1", (width - 60, height - 10), cv2.FONT_HERSHEY_SIMPLEX,
+		cv2.putText(frame, "#{}".format(num_people), (width - 60, height - 10), cv2.FONT_HERSHEY_SIMPLEX,
 			1, (0, 255, 255), 2)
 		cv2.imshow('Mask Detection', frame)
 		key = cv2.waitKey(1) & 0xFF
@@ -161,7 +183,12 @@ def maskCode():
 			cv2.destroyAllWindows()
 			vs.stop()
 			break
-	
+			
+		if isBreak == True:
+			print("[INFO] cleaning up...")
+			cv2.destroyAllWindows()
+			break
+		
 
 if __name__ == "__main__":
 	main()
