@@ -8,21 +8,21 @@ GPIO.setup(8, GPIO.OUT, initial=GPIO.LOW)
 
 def main():
 
-    while True:
-        buzzerOn(2)
-        buzzerOff(2)
+	while True:
+		buzzerOn(2)
+		buzzerOff(2)
 
 def buzzerOff(waitTime):
-   
-    #
-    time.sleep(waitTime)
-    #
+	GPIO.output(8, GPIO.LOW)
+	#
+	time.sleep(waitTime)
+	#
 
 def buzzerOn(waitTime):
-   
-    #
-    time.sleep(waitTime)
-    #
+	GPIO.output(8, GPIO.HIGH)
+	#
+	time.sleep(waitTime)
+	#
 
 if __name__ == "__main__":
 	main()
