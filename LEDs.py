@@ -12,9 +12,9 @@ GPIO.setup(32, GPIO.OUT, initial=GPIO.LOW)
 def main():
 
 	while True:
-		red(2)
-		green(2)
-		white(2)
+		red(10)
+		# green(2)
+		# white(2)
 
 def red(waitTime):
 	GPIO.output(38, GPIO.HIGH)
