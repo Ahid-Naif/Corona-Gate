@@ -14,28 +14,28 @@ def main():
 	while True:
 		red(2)
 		green(2)
-        white(2)
+		white(2)
 
 def red(waitTime):
 	GPIO.output(38, GPIO.HIGH)
-    GPIO.output(36, GPIO.LOW)
-    GPIO.output(32, GPIO.LOW)
+	GPIO.output(36, GPIO.LOW)
+	GPIO.output(32, GPIO.LOW)
 	#
 	time.sleep(waitTime)
 	#
 
 def green(waitTime):
 	GPIO.output(38, GPIO.LOW)
-    GPIO.output(36, GPIO.HIGH)
-    GPIO.output(32, GPIO.LOW)
+	GPIO.output(36, GPIO.HIGH)
+	GPIO.output(32, GPIO.LOW)
 	#
 	time.sleep(waitTime)
 	#
 
 def white(waitTime):
 	GPIO.output(38, GPIO.HIGH)
-    GPIO.output(36, GPIO.HIGH)
-    GPIO.output(32, GPIO.HIGH)
+	GPIO.output(36, GPIO.HIGH)
+	GPIO.output(32, GPIO.HIGH)
 	#
 	time.sleep(waitTime)
 	#
