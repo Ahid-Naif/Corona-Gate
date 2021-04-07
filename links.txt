@@ -1,0 +1,11 @@
+-> remove python
+https://www.raspberrypi.org/forums/viewtopic.php?t=12865
+
+-> change default python
+https://www.alcher.me/python/change-default-python-version/#:~:text=Change%20to%20default%20python3%20version,%2Fusr%2Fbin%2Fpython2.
+
+-> install opencv
+https://www.pyimagesearch.com/2019/09/16/install-opencv-4-on-raspberry-pi-4-and-raspbian-buster/
+
+-> install keras & tensorflow
+https://medium.com/@abhizc/installing-latest-tensor-flow-and-keras-on-raspberry-pi-aac7dbf95f2
