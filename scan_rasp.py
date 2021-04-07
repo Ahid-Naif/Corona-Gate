@@ -54,9 +54,9 @@ def main():
 
 	# loop over the frames from the video stream
 	while True:
-        closeGate()
-        buzzerOff()
-        white()
+		closeGate()
+		buzzerOff()
+		white()
 		# grab the frame from the threaded video stream and resize it to
 		# have a maximum width of 400 pixels
 		frame = vs.read()
@@ -110,7 +110,7 @@ def main():
 		if checkForMask:
 			checkForMask = False
 			cv2.destroyAllWindows()
-            buzzerOn(2)
+			buzzerOn(2)
 			timeIn = time.time()
 			maskCode()
 
@@ -141,12 +141,12 @@ def maskCode():
 	isBreak = False
 	
 	while True:
-        closeGate()
-        buzzerOff()
-        white()
+		closeGate()
+		buzzerOff()
+		white()
 		if time.time() - timeIn > waitMaskDuration:
 			cv2.destroyAllWindows()
-            red_buzzer(2)
+			red_buzzer(2)
 			break
 
 		frame = vs.read()
@@ -188,7 +188,7 @@ def maskCode():
 						isMaskOn = False
 						isBreak = True
 						num_people = num_people + 1
-                        openGate_buzzer_green(5)
+						openGate_buzzer_green(5)
 						break
 					else:
 						isMaskOn = False
@@ -219,32 +219,32 @@ def maskCode():
 			break
 
 def closeGate():
-    #
-    angle = 100
-    duty = angle / 18 + 2
-    GPIO.output(11, True)
-    pwm11.ChangeDutyCycle(duty)
-    time.sleep(1)
-    GPIO.output(11, False)
-    pwm11.ChangeDutyCycle(0)
+	#
+	angle = 100
+	duty = angle / 18 + 2
+	GPIO.output(11, True)
+	pwm11.ChangeDutyCycle(duty)
+	time.sleep(1)
+	GPIO.output(11, False)
+	pwm11.ChangeDutyCycle(0)
 
 def openGate_buzzer_green(waitTime):
-    angle = 180
-    duty = angle / 18 + 2
-    GPIO.output(11, True)
-    pwm11.ChangeDutyCycle(duty)
-    time.sleep(1)
-    GPIO.output(11, False)
-    pwm11.ChangeDutyCycle(0)
-    #
-    GPIO.output(37, GPIO.HIGH) # buzzer
-    # green
-    GPIO.output(38, GPIO.LOW)
+	angle = 180
+	duty = angle / 18 + 2
+	GPIO.output(11, True)
+	pwm11.ChangeDutyCycle(duty)
+	time.sleep(1)
+	GPIO.output(11, False)
+	pwm11.ChangeDutyCycle(0)
+	#
+	GPIO.output(37, GPIO.HIGH) # buzzer
+	# green
+	GPIO.output(38, GPIO.LOW)
 	GPIO.output(36, GPIO.HIGH)
 	GPIO.output(32, GPIO.LOW)
-    #
-    time.sleep(waitTime)
-    #
+	#
+	time.sleep(waitTime)
+	#
 
 def buzzerOn(waitTime):
 	GPIO.output(37, GPIO.HIGH)
@@ -259,8 +259,8 @@ def red_buzzer(waitTime):
 	GPIO.output(38, GPIO.HIGH)
 	GPIO.output(36, GPIO.LOW)
 	GPIO.output(32, GPIO.LOW)
-    #
-    GPIO.output(37, GPIO.HIGH) # buzzer
+	#
+	GPIO.output(37, GPIO.HIGH) # buzzer
 	#
 	time.sleep(waitTime)
 	#
