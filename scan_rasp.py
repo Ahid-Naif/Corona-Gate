@@ -28,7 +28,7 @@ GPIO.setup(37, GPIO.OUT, initial=GPIO.LOW)
 
 #
 
-model=load_model("./model2-006.model")
+model=load_model("./model2-005.model")
 
 labels_dict={0:'without mask',1:'mask'}
 color_dict={0:(0,0,255),1:(0,255,0)}
