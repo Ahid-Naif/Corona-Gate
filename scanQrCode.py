@@ -8,7 +8,7 @@ import re
 from keras.models import load_model
 import numpy as np
 
-model=load_model("./model2-006.model")
+model=load_model("./model2-005.model")
 
 labels_dict={0:'without mask',1:'mask'}
 color_dict={0:(0,0,255),1:(0,255,0)}
