@@ -46,6 +46,9 @@ print("[INFO] starting video stream...")
 vs = VideoStream(src=0).start()
 time.sleep(2.0)
 
+closeGate()
+time.sleep(2.0)
+
 def main():
 	global checkForMask
 	global timeIn
@@ -54,7 +57,6 @@ def main():
 
 	# loop over the frames from the video stream
 	while True:
-		closeGate()
 		buzzerOff()
 		white()
 		# grab the frame from the threaded video stream and resize it to
@@ -139,9 +141,11 @@ def maskCode():
 	masktime = 0
 	isMaskOn = False
 	isBreak = False
+
+	closeGate()
+	time.sleep(2.0)
 	
 	while True:
-		closeGate()
 		buzzerOff()
 		white()
 		if time.time() - timeIn > waitMaskDuration:
