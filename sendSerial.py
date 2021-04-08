@@ -15,7 +15,7 @@ if __name__ == '__main__':
 		print(line)
 		time.sleep(2)
 
-		ser.write(b"white!\n")
+		ser.write(b"white\n")
 		line = ser.readline().decode('utf-8').rstrip()
 		print(line)
 		time.sleep(2)
