@@ -46,14 +46,14 @@ print("[INFO] starting video stream...")
 vs = VideoStream(src=0).start()
 time.sleep(2.0)
 
-closeGate()
-time.sleep(2.0)
-
 def main():
 	global checkForMask
 	global timeIn
 	global vs
 	global num_people
+
+	closeGate()
+	time.sleep(2.0)
 
 	# loop over the frames from the video stream
 	while True:
