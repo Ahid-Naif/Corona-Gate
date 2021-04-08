@@ -6,6 +6,7 @@ ser = serial.Serial('/dev/ttyS0', 9600, timeout=1)
 
 while True:
 	ser.write('r'.encode())
+	print("send")
 	time.sleep(2)
 
 	ser.write('g'.encode())
