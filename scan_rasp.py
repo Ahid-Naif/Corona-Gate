@@ -142,9 +142,6 @@ def maskCode():
 	isMaskOn = False
 	isBreak = False
 
-	closeGate()
-	time.sleep(2.0)
-	
 	while True:
 		buzzerOff()
 		white()
