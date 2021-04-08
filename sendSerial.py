@@ -1,16 +1,11 @@
+#!/usr/bin/env python3
 import serial
 import time
-
-# ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
-ser = serial.Serial('/dev/ttyS0', 9600, timeout=1)
-
-while True:
-	ser.write('r'.encode())
-	print("send")
-	time.sleep(2)
-
-	ser.write('g'.encode())
-	time.sleep(2)
-
-	ser.write('w'.encode())
-	time.sleep(2)
+if __name__ == '__main__':
+    ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+    ser.flush()
+    while True:
+        ser.write(b"Hello from Raspberry Pi!\n")
+        line = ser.readline().decode('utf-8').rstrip()
+        print(line)
+        time.sleep(1)
