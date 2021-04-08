@@ -61,7 +61,7 @@ def main():
 		# grab the frame from the threaded video stream and resize it to
 		# have a maximum width of 400 pixels
 		frame = vs.read()
-		frame = imutils.resize(frame, width=600)
+		frame = imutils.resize(frame, width=400)
 
 		height, width,_ = frame.shape
 		
@@ -157,7 +157,7 @@ def maskCode():
 			break
 
 		frame = vs.read()
-		frame = imutils.resize(frame, width=600)
+		frame = imutils.resize(frame, width=400)
 
 		height, width,_ = frame.shape
 
