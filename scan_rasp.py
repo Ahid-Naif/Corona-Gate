@@ -38,7 +38,7 @@ classifier = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
 checkForMask = False
 timeIn = time.time()
-waitMaskDuration = 5
+waitMaskDuration = 10
 num_people = 0
 
 # initialize the video stream and allow the camera sensor to warm up
@@ -189,7 +189,8 @@ def maskCode():
 						isMaskOn = False
 						isBreak = True
 						num_people = num_people + 1
-						openGate_buzzer_green(5)
+						openGate_buzzer_green(10)
+						closeGate()
 						break
 					else:
 						isMaskOn = False
