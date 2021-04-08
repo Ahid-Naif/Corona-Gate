@@ -33,7 +33,7 @@ classifier = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
 checkForMask = False
 timeIn = time.time()
-waitMaskDuration = 10
+waitMaskDuration = 15
 num_people = 0
 
 # initialize the video stream and allow the camera sensor to warm up
