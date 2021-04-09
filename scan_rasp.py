@@ -111,6 +111,9 @@ def main():
 		if checkForMask:
 			checkForMask = False
 			cv2.destroyAllWindows()
+			done_image = cv2.imread('done.jpg')
+			done_image = done_image.resize(frame, width=400)
+			cv2.imshow('Pass', done_image)
 			ser.write(b"buzzerON\n")
 			time.sleep(2)
 			timeIn = time.time()
@@ -144,6 +147,8 @@ def maskCode():
 	isBreak = False
 
 	sensor = MLX90614(bus, address=0x5A)
+
+	cv2.destroyAllWindows()
 
 	while True:
 		ser.write(b"buzzerOFF\n")
