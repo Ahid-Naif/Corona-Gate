@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # import the necessary packages
 import time
 from imutils.video import VideoStream
