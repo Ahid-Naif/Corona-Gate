@@ -112,7 +112,7 @@ def main():
 			checkForMask = False
 			cv2.destroyAllWindows()
 			done_image = cv2.imread('done.jpg')
-			done_image = done_image.resize(done_image, width=400)
+			done_image = imutils.resize(done_image, width=400)
 			cv2.imshow('Pass', done_image)
 			ser.write(b"buzzerON\n")
 			time.sleep(2)
