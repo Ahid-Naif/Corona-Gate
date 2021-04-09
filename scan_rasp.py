@@ -1,4 +1,6 @@
 # import the necessary packages
+import time
+time.sleep(10)
 from imutils.video import VideoStream
 from pyzbar import pyzbar
 import imutils
