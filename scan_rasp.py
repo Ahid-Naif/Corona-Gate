@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # import the necessary packages
 import time
 from imutils.video import VideoStream
@@ -195,7 +194,7 @@ def maskCode():
 					maskTime = time.time()
 			else:
 				if time.time() - maskTime > 1:
-					if(labels_dict[label] == 'mask' and (sensor.get_object_1() > 27 or sensor.get_object_1() < 40) ):
+					if(labels_dict[label] == 'mask'):
 						isMaskOn = False
 						isBreak = True
 						num_people = num_people + 1
