@@ -111,9 +111,14 @@ def main():
 		if checkForMask:
 			checkForMask = False
 			cv2.destroyAllWindows()
-			done_image = cv2.imread('done.jpg')
-			# done_image = imutils.resize(done_image, width=400)
+			
+			done_image = np.zeros((400,400,3), np.uint8)
+			done_image[:,0:400] = (0,255,0)
+
+			cv2.putText(done_image, "Pass!", (100, 200), cv2.FONT_HERSHEY_SIMPLEX,
+						2, (255, 255, 255), 2)
 			cv2.imshow('Pass', done_image)
+
 			ser.write(b"buzzerON\n")
 			time.sleep(2)
 			timeIn = time.time()
