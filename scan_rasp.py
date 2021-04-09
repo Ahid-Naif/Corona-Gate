@@ -51,7 +51,7 @@ def main():
 	global ser
 	global num_people
 
-	closeGate()
+	ser.write(b"closeGate\n")
 	time.sleep(2.0)
 
 	# loop over the frames from the video stream
@@ -151,8 +151,7 @@ def maskCode():
 		if time.time() - timeIn > waitMaskDuration:
 			cv2.destroyAllWindows()
 			# red & buzzer
-			ser.write(b"buzzerON\n")
-			ser.write(b"red\n")
+			ser.write(b"buzzerON_red\n")
 			time.sleep(2)
 			break
 
@@ -195,11 +194,11 @@ def maskCode():
 						isMaskOn = False
 						isBreak = True
 						num_people = num_people + 1
-						openGate()
+						ser.write(b"openGate\n")
 						ser.write(b"buzzerON\n")
 						ser.write(b"green\n")
 						time.sleep(10)
-						closeGate()
+						ser.write(b"closeGate\n")
 						break
 					else:
 						isMaskOn = False
@@ -227,25 +226,6 @@ def maskCode():
 			print("[INFO] cleaning up...")
 			cv2.destroyAllWindows()
 			break
-
-def closeGate():
-	#
-	angle = 100
-	duty = angle / 18 + 2
-	GPIO.output(11, True)
-	pwm11.ChangeDutyCycle(duty)
-	time.sleep(1)
-	GPIO.output(11, False)
-	pwm11.ChangeDutyCycle(0)
-
-def openGate():
-	angle = 180
-	duty = angle / 18 + 2
-	GPIO.output(11, True)
-	pwm11.ChangeDutyCycle(duty)
-	time.sleep(1)
-	GPIO.output(11, False)
-	pwm11.ChangeDutyCycle(0)
 		
 
 if __name__ == "__main__":
