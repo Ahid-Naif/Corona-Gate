@@ -13,25 +13,20 @@ from smbus2 import SMBus
 from mlx90614 import MLX90614
 import RPi.GPIO as GPIO
 
+# define port to read from temperature sensor through I2C
 bus = SMBus(1)
 
-#
-#servo
-GPIO.setwarnings(False) 
-GPIO.setmode(GPIO.BOARD)
-
-GPIO.setup(11, GPIO.OUT)
-pwm11=GPIO.PWM(11, 50)
-pwm11.start(0)
-
+# load AI model to detect the Mask
 model=load_model("./model2-005.model")
 
+# define variables to be used in the code
 labels_dict={0:'without mask',1:'mask'}
 color_dict={0:(0,0,255),1:(0,255,0)}
 
-# We load the xml file
+# We load the xml file for face detection
 classifier = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
+# define variables to be used in the code
 checkForMask = False
 timeIn = time.time()
 waitMaskDuration = 15
@@ -42,22 +37,27 @@ print("[INFO] starting video stream...")
 vs = VideoStream(src=0).start()
 time.sleep(2.0)
 
+# initialize serial port to send commands to the Arduino
 ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
 ser.flush()
 
 def main():
+	# define variables to be used in the code
 	global checkForMask
 	global timeIn
 	global vs
 	global ser
 	global num_people
 
+	# send command to the arduino to keep gate closed
 	ser.write(b"closeGate\n")
 	time.sleep(2.0)
 
 	# loop over the frames from the video stream
 	while True:
+		# send command to the arduino to keep buzzer off
 		ser.write(b"buzzerOFF\n")
+		# send command to the arduino to turn on white light
 		ser.write(b"white\n")
 		# grab the frame from the threaded video stream and resize it to
 		# have a maximum width of 400 pixels
@@ -66,6 +66,7 @@ def main():
 
 		height, width,_ = frame.shape
 		
+		# perform operations on images to get توكلنا App Qr code
 		hsv = cv2.cvtColor(frame.copy(), cv2.COLOR_BGR2HSV)
 		(h, s, v) = cv2.split(hsv)
 
@@ -104,7 +105,9 @@ def main():
 				0.5, (0, 0, 255), 2)
 
 			regex_result = re.findall("[\w\d\.\*\\=*?*+*-*/*]", barcodeData)
+			# send of توكلنا Qr Code identification process
 
+			# if the detected QR code is for توكلنا App, start looking for the mask
 			if len(regex_result) == 44:
 				print("[INFO] QR Code Pass")
 				checkForMask = True
@@ -113,6 +116,7 @@ def main():
 			checkForMask = False
 			cv2.destroyAllWindows()
 
+			# send command to the arduino to turn buzzer on
 			ser.write(b"buzzerON\n")
 			time.sleep(2)
 			timeIn = time.time()
@@ -134,6 +138,7 @@ def main():
 			break
 
 def maskCode():
+	# define variables to be used in the code
 	global timeIn
 	global waitMaskDuration
 	global vs
@@ -145,16 +150,21 @@ def maskCode():
 	isMaskOn = False
 	isBreak = False
 
+	# initialize object to read temperature from temperature sensor
 	sensor = MLX90614(bus, address=0x5A)
 
 	cv2.destroyAllWindows()
 
 	while True:
+		# send command to the arduino to turn buzzer off
 		ser.write(b"buzzerOFF\n")
+		# send command to the arduino to turn white light
 		ser.write(b"white\n")
+
+		# if there is no mask detected, turn red light and buzzer on
 		if time.time() - timeIn > waitMaskDuration:
 			cv2.destroyAllWindows()
-			# red & buzzer
+			# send command to the arduino to turn red light & turn buzzer on
 			ser.write(b"buzzerON_red\n")
 			time.sleep(2)
 			break
@@ -162,6 +172,7 @@ def maskCode():
 		frame = vs.read()
 		frame = imutils.resize(frame, width=400)
 
+		# perform operations to detect the mask
 		height, width,_ = frame.shape
 
 		frame = cv2.flip(frame,1,1) #Flip to act as a mirror
@@ -194,14 +205,23 @@ def maskCode():
 					maskTime = time.time()
 			else:
 				if time.time() - maskTime > 1:
-					if(labels_dict[label] == 'mask'):
+					# if there is mask and temperature is whithin the range
+					# turn green light
+					# open the gate
+					# turn buzzer on
+					# all for 10 seconds
+					if(labels_dict[label] == 'mask' and (sensor.get_object_1() > 27 && sensor.get_object_1() < 40)):
 						isMaskOn = False
 						isBreak = True
 						num_people = num_people + 1
+						# send command to the arduino to open the gate
 						ser.write(b"openGate\n")
+						# send command to the arduino to turn turn buzzer on
 						ser.write(b"buzzerON\n")
+						# send command to the arduino to turn green light
 						ser.write(b"green\n")
 						time.sleep(10)
+						# send command to the arduino to close the gate
 						ser.write(b"closeGate\n")
 						break
 					else:
@@ -233,4 +253,5 @@ def maskCode():
 		
 
 if __name__ == "__main__":
+	# main function where the code starts
 	main()
